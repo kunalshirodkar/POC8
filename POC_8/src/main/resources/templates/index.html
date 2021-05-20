@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Student Project</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+
+<body>
+	<div class="container my-2">
+		<h1 style="text-align: center">Student Project</h1>
+		<a th:href="@{/showNewStudentForm}" class="btn btn-primary btn-md mb-3"> Add Student </a><br><hr>
+				
+			<form th:action="@{/student/search}">
+				<input type="text" name="keyvalue" id="keyvalue" size="50" th:value="${keyvalue}"/>
+				<input type="submit" value="Search" />
+			</form><br>
+
+
+		<table border="1" class="table table-hover" style="text-align: center">
+			<thead>
+				<tr>
+					<th><a th:href="@{'/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir}}"> Sr. No.</a></th>
+					<th><a th:href="@{'/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir}}"> First Name</a></th>
+					<th><a th:href="@{'/page/' + ${currentPage} + '?sortField=lastName&sortDir=' + ${reverseSortDir}}"> Last Name</a></th>
+					<th><a th:href="@{'/page/' + ${currentPage} + '?sortField=email&sortDir=' + ${reverseSortDir}}"> Email</a></th>
+					<th><a th:href="@{'/page/' + ${currentPage} + '?sortField=contact&sortDir=' + ${reverseSortDir}}"> Contact</a></th>
+					<th><a th:href="@{'/page/' + ${currentPage} + '?sortField=photos&sortDir=' + ${reverseSortDir}}"> Photo</a></th>
+					<th>Projects</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="student : ${students}">
+					<td th:text="${student.id}"></td>
+					<td th:text="${student.firstName}"></td>
+					<td th:text="${student.lastName}"></td>
+					<td th:text="${student.email}"></td>
+					<td th:text="${student.contact}"></td>
+					<td><img th:src="@{${student.photosImagePath}}" /></td>
+					<td><span th:each="project : ${projectList}"> 
+						<span th:if="${student.id}==${project.student.id}">
+						<span th:text="${project.name}"></span> <br>
+						</span>
+					</span>
+					</td>
+
+					<td><a th:href="@{/addStudentProject/{id}(id=${student.id})}" class="btn btn-primary btn-xs">Add/RemoveProject</a> 
+						<a th:href="@{/deleteStudent/{id}(id=${student.id})}"	  class="btn btn-danger btn-xs">Delete</a> 
+						<a th:href="@{/updateStudentForm/{id}(id=${student.id})}" class="btn btn-warning btn-xs">Update</a></td>
+				</tr>
+			</tbody>
+		</table><hr>
+
+		
+
+
+		<!-- Pagination control -->
+		<!-- Hardcoding the default page-size as 10. User can create a dropdown to select the different page-sizes. -->
+		<div th:if="${totalPages > 1}">
+			<div class="row col-sm-10">
+				<div class="col-sm-2">Total Rows: [[${totalItems}]]</div>
+				<div class="col-sm-1">
+					<span th:each="i: ${#numbers.sequence(1, totalPages)}"> 
+					<a th:if="${currentPage != i}" th:href="@{'/page/' + ${i}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+						<span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp; &nbsp;</span>
+				</div>
+				<div class="col-sm-1">
+					<a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage + 1}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Next</a>
+					<span th:unless="${currentPage < totalPages}">Next</span>
+				</div>
+
+				<div class="col-sm-1">
+					<a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Last</a>
+					<span th:unless="${currentPage < totalPages}">Last</span>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
